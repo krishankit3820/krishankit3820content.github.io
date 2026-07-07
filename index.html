@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Size Guide API Test</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f4f5f7;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 40px 20px;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  p.desc {
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-size: 14px;
+    word-break: break-all;
+  }
+  button {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 12px 22px;
+    font-size: 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  button:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+  button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+  }
+  #status {
+    margin-top: 14px;
+    font-size: 14px;
+    color: #555;
+  }
+  #status.error {
+    color: #b91c1c;
+  }
+  #status.success {
+    color: #15803d;
+  }
+  pre#result {
+    margin-top: 20px;
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 8px;
+    max-height: 600px;
+    overflow: auto;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    display: none;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Size Guide API Test</h1>
+    <p class="desc">Endpoint: https://content-eu-1.content-cms.com/e753533a-ef24-411c-a0d3-9bed2e5f2d3f/dxdam/78/78b9e61b-2347-4f24-9b38-6851bb6ca9c0/size-guide.json</p>
+
+    <button id="fetchBtn">Fetch Size Guide</button>
+    <div id="status"></div>
+    <pre id="result"></pre>
+  </div>
+
+  <script>
+    const API_URL = "https://content-eu-1.content-cms.com/e753533a-ef24-411c-a0d3-9bed2e5f2d3f/dxdam/78/78b9e61b-2347-4f24-9b38-6851bb6ca9c0/size-guide.json";
+    const btn = document.getElementById("fetchBtn");
+    const status = document.getElementById("status");
+    const result = document.getElementById("result");
+
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      status.textContent = "Loading...";
+      status.className = "";
+      result.style.display = "none";
+      result.textContent = "";
+
+      try {
+        const response = await fetch(API_URL);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        status.textContent = `Success — received response (${JSON.stringify(data).length.toLocaleString()} characters).`;
+        status.className = "success";
+        result.textContent = JSON.stringify(data, null, 2);
+        result.style.display = "block";
+      } catch (err) {
+        status.textContent = "Error: " + err.message + " (this may be a CORS restriction if the API doesn't allow browser requests from this origin).";
+        status.className = "error";
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
